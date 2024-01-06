@@ -143,19 +143,31 @@ async function getName(id) {
   }
 }
 
+// Set Puppeteer cache path before initializing the browser
+process.env.PUPPETEER_CACHE_DIR = '/opt/render/.cache/puppeteer';
+
 app.listen(port, async () => {
-  // Initialize the browser instance when the server starts
-  browser = await puppeteer.launch();
-  console.log(`Server is running on port ${port}`);
+  try {
+    // Initialize the browser instance when the server starts
+    browser = await puppeteer.launch();
+    console.log(`Server is running on port ${port}`);
+  } catch (error) {
+    console.error('Error initializing browser:', error);
+    process.exit(1);
+  }
 });
 
 // Close the browser instance when the server stops
 process.on('SIGINT', async () => {
-  await browser.close();
+  if (browser) {
+    await browser.close();
+  }
   process.exit();
 });
 
 process.on('SIGTERM', async () => {
-  await browser.close();
+  if (browser) {
+    await browser.close();
+  }
   process.exit();
 });
