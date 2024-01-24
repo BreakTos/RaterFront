@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const puppeteer = require('puppeteer');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,9 +18,6 @@ const voteSchema = new mongoose.Schema({
 });
 
 const Vote = mongoose.model('Vote', voteSchema);
-
-// Create a single browser instance for reuse
-let browser;
 
 app.get('/', async (req, res) => {
   try {
@@ -127,47 +125,19 @@ app.get('/getProblemName', async (req, res) => {
 
 async function getName(id) {
   const url = 'https://codeforces.com/problemset/problem/' + id;
-  const page = await browser.newPage();  // Reuse the same page from the browser
 
   try {
-    await page.goto(url);
-    await page.waitForSelector('div.title');
-    const problemName = await page.$eval('div.title', element => element.textContent.trim());
+    const response = await axios.get(url);
+    const $ = cheerio.load(response.data);
+    const problemName = $('div.title').text().trim();
     console.log(problemName);
-    return problemName || 'Problem name not found';
+    return problemName.substring(0,problemName.indexOf("InputOutput")) || 'Problem name not found';
   } catch (error) {
     console.error('Error:', error);
     return 'Error: Unable to fetch content';
-  } finally {
-    await page.close();  // Close the page after each call
   }
 }
 
-// Set Puppeteer cache path before initializing the browser
-process.env.PUPPETEER_CACHE_DIR = '/opt/render/.cache/puppeteer';
-
 app.listen(port, async () => {
-  try {
-    // Initialize the browser instance when the server starts
-    browser = await puppeteer.launch();
-    console.log(`Server is running on port ${port}`);
-  } catch (error) {
-    console.error('Error initializing browser:', error);
-    process.exit(1);
-  }
-});
-
-// Close the browser instance when the server stops
-process.on('SIGINT', async () => {
-  if (browser) {
-    await browser.close();
-  }
-  process.exit();
-});
-
-process.on('SIGTERM', async () => {
-  if (browser) {
-    await browser.close();
-  }
-  process.exit();
+  console.log(`Server is running on port ${port}`);
 });
