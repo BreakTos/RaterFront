@@ -39,8 +39,60 @@ async function generateHTML(votes) {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Problem Solvers</title>
-      <link rel="stylesheet" href="styles.css">
+      <link rel="stylesheet" href="index.css">
+      <style>
+      /* Add your additional CSS styles here */
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: rgb(102, 116, 204);
+        color: #333;
+      }
+  
+      h1 {
+        text-align: center;
+        margin: 20px 0;
+        color: black;
+      }
+  
+      #solverList {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+  
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+  
+      th, td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+  
+      th {
+        background-color: #0066cc;
+        color: white;
+      }
+  
+      a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+  
+      a:hover {
+        text-decoration: underline;
+      }
+  
+      .problems-information {
+        margin-top: 20px;
+      }
+    </style>
     </head>
+    
     <body>
       <h1> Best-Of-CF </h1> 
       <div id="solverList">
@@ -51,7 +103,6 @@ async function generateHTML(votes) {
                 <th>Index</th>
                 <th>Problem</th>
                 <th>Votes</th>
-                <th>Problem Name</th>
               </tr>
             </thead>
             <tbody id="problemListBody">
