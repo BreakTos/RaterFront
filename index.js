@@ -44,21 +44,25 @@ async function generateHTML(votes) {
       /* Add your additional CSS styles here */
       body {
         font-family: 'Arial', sans-serif;
-        background-color: rgb(102, 116, 204);
+        background-color: rgb(0, 255, 191); /* Change the background color here */
         color: #333;
       }
-  
       h1 {
         text-align: center;
         margin: 20px 0;
-        color: black;
+        color: white;
+        background-color: navy;
+        border: 5% solid #fff; /* Border width set to 5% */
+        border-radius: 10px;
+        padding: 10px;
+        box-sizing: border-box; /* Include padding and border in total width/height */
       }
-  
+    
       #solverList {
         max-width: 800px;
         margin: 0 auto;
       }
-  
+    
       table {
         width: 100%;
         border-collapse: collapse;
@@ -66,29 +70,40 @@ async function generateHTML(votes) {
         background-color: #fff;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
-  
+    
       th, td {
         padding: 15px;
         text-align: left;
         border-bottom: 1px solid #ddd;
+        border-right: 1px solid #ddd;
       }
-  
+    
       th {
         background-color: #0066cc;
         color: white;
       }
-  
+    
       a {
         color: #0066cc;
         text-decoration: none;
       }
-  
+    
       a:hover {
         text-decoration: underline;
       }
-  
+    
       .problems-information {
         margin-top: 20px;
+      }
+    
+      /* Add space between problems and separate border for each problem */
+      tr {
+        margin-bottom: 10px;
+        border-bottom: 2px solid #ddd; /* Separate border for each problem */
+      }
+    
+      td {
+        padding-top: 10px; /* Add space between rows */
       }
     </style>
     </head>
@@ -192,3 +207,23 @@ async function getName(id) {
 app.listen(port, async () => {
   console.log(`Server is running on port ${port}`);
 });
+
+async function generateVoteList(votes) {
+  // Sort the votes based on the number of names in descending order
+  const sortedVotes = votes.sort((a, b) => b.names.length - a.names.length);
+
+  const rows = [];
+  for (const [index, vote] of sortedVotes.entries()) {
+    const problemId = vote.problem;
+    const problemLink = `https://codeforces.com/problemset/problem/${problemId}`;
+    rows.push(`
+      <tr>
+        <td>${index + 1}</td>
+        <td><a href="${problemLink}" target="_blank">${problemId}</a></td>
+        <td>${vote.names.length}</td>
+      </tr>
+    `);
+  }
+  return rows.join('');
+}
+
